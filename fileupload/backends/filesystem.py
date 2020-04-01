@@ -1,7 +1,9 @@
+""" Filesystem backend for file upload. """
+from __future__ import absolute_import
+
 from django.conf import settings
 import django.core.cache
-#from django.core.urlresolvers import reverse_lazy
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.encoding import smart_text
 
 from .. import exceptions
@@ -48,7 +50,7 @@ class Backend(BaseBackend):
 
     def _get_url(self, key):
         key_name = self._get_key_name(key)
-	    url = reverse("openassessment-filesystem-storage", kwargs={'key': key_name}) 
+        url = reverse("openassessment-filesystem-storage", kwargs={'key': key_name})
         return url
 
 
@@ -64,8 +66,7 @@ def get_cache():
     """
     cache_name = getattr(settings, "ORA2_FILEUPLOAD_CACHE_NAME", None)
     if cache_name is None:
-        return django.core.cache.caches["default"]
-        #raise exceptions.FileUploadInternalError("Undefined cache backend for file upload")
+        raise exceptions.FileUploadInternalError("Undefined cache backend for file upload")
     return django.core.cache.caches[cache_name]
 
 
@@ -112,8 +113,12 @@ def is_download_url_available(url_key_name):
 
 
 def get_upload_cache_key(url_key_name):
+    if isinstance(url_key_name, bytes):
+        url_key_name = url_key_name.decode('utf-8')
     return "upload/" + url_key_name
 
 
 def get_download_cache_key(url_key_name):
+    if isinstance(url_key_name, bytes):
+        url_key_name = url_key_name.decode('utf-8')
     return "download/" + url_key_name
