@@ -8,7 +8,7 @@ from django.conf import settings
 
 def get_backend():
     # Use S3 backend by default (current behaviour)
-    backend_setting = getattr(settings, "ORA2_FILEUPLOAD_BACKEND", "swift")
+    backend_setting = getattr(settings, "ORA2_FILEUPLOAD_BACKEND", "django")
     return django_storage.Backend()
     # if backend_setting == "s3":
     #     return s3.Backend()
